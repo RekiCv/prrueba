@@ -2,39 +2,50 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Notas Dinámicas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">    
 </head>
-<body>
-    <h1>Mis Notas</h1>
-    <input type="text" id="notaInput" placeholder="Escribe aquí...">
-    <button onclick="agregarNota()">Guardar</button>
+<body class="bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <ul id="listaNotas">
-        {% for nota in notas %}
-            <li>{{ nota[1] }}</li>
-        {% endfor %}
-    </ul>
+    <div class="bg-slate-800/80 backdrop-blur-md border border-slate-700 shadow-2xl rounded-3xl w-full max-w-lg p-8">
+        
+        <div class="flex items-center gap-3 mb-8">
+            <span class="text-3xl">✨</span>
+            <h1 class="text-2xl font-extrabold tracking-tight text-white">Panel de Notas</h1>
+        </div>
 
-    <script>
-        async function agregarNota() {
-            const input = document.getElementById('notaInput');
-            const contenido = input.value;
+        <form action="/agregar" method="POST" class="space-y-4 mb-8">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Nueva Nota</label>
+                <input type="text" name="contenido" placeholder="¿Qué estás pensando?" required
+                    class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+            </div>
+            <button type="submit" 
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl py-3 shadow-lg shadow-indigo-600/30 transition-all active:scale-[0.98]">
+                Guardar Nota
+            </button>
+        </form>
 
-            // Enviamos el dato al servidor sin recargar la página
-            await fetch('/agregar', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: `contenido=${contenido}`
-            });
-
-            // Agregamos la nota a la lista visualmente
-            const lista = document.getElementById('listaNotas');
-            const li = document.createElement('li');
-            li.textContent = contenido;
-            lista.appendChild(li);
-            
-            input.value = ''; // Limpiamos el campo
-        }
-    </script>
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4">Notas Guardadas</h2>
+        <ul class="space-y-3 max-h-64 overflow-y-auto pr-1">
+            {% for nota in notas %}
+                <li class="bg-slate-900/40 border border-slate-700/60 rounded-2xl p-4 text-slate-200 shadow-inner flex items-center justify-between group">
+                    <span class="break-words">{{ nota[1] }}</span>
+                    <!-- Botón de eliminar -->
+                    <form action="/eliminar/{{ nota[0] }}" method="POST">
+                        <button type="submit" class="text-slate-500 hover:text-red-400 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </form>
+                </li>
+            {% else %}
+                <p class="text-slate-500 text-sm italic text-center py-4">No hay notas todavía. ¡Crea la primera!</p>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>

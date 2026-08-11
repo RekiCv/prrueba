@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Notas Dinámicas</title>
+</head>
+<body>
+    <h1>Mis Notas</h1>
+    <input type="text" id="notaInput" placeholder="Escribe aquí...">
+    <button onclick="agregarNota()">Guardar</button>
+
+    <ul id="listaNotas">
+        {% for nota in notas %}
+            <li>{{ nota[1] }}</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        async function agregarNota() {
+            const input = document.getElementById('notaInput');
+            const contenido = input.value;
+
+            // Enviamos el dato al servidor sin recargar la página
+            await fetch('/agregar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `contenido=${contenido}`
+            });
+
+            // Agregamos la nota a la lista visualmente
+            const lista = document.getElementById('listaNotas');
+            const li = document.createElement('li');
+            li.textContent = contenido;
+            lista.appendChild(li);
+            
+            input.value = ''; // Limpiamos el campo
+        }
+    </script>
+</body>
+</html>
